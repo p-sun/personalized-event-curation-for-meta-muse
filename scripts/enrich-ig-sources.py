@@ -14,7 +14,7 @@ import json
 import subprocess
 import time
 
-ACCOUNT_ID = "YOUR_IG_USER_ID"  # @YOUR_IG_USERNAME
+ACCOUNT_ID = "YOUR_IG_USER_ID"  # your own Instagram user id — set for your setup
 
 
 def lookup(username):

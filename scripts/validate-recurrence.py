@@ -15,10 +15,13 @@ import argparse
 import datetime as dt
 import importlib.util
 import json
+import os
 import sys
 
 SPEC = importlib.util.spec_from_file_location(
-    "materialize", "materialize-recurrence.py"
+    "materialize",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                 "materialize-recurrence.py")
 )
 materialize = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(materialize)

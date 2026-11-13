@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Instagram pull — reference implementation: one morning's run of the
-saved-collection + fanout adapter, kept as the template for the daily
-pull. Set ACCOUNT / COLLECTION / WORK for your own setup before use.
+"""Instagram pull — canonical template. Each morning run is an instance of
+this file: copy it, fill in the constants block below (ACCOUNT /
+COLLECTION / WORK / TODAY / SINCE), and save the copy as the dated run.
+Fixes to the pull land HERE, in the template — never only in a dated copy.
 
-FORMAT NOTE — the connector's saved-posts shape nests each post
-under `media` (author / caption / permalink / media_id / created_at);
-the simplify function below maps that shape, with a flat-shape
-fallback. Fanout `posts` returns URL-only records (social_posts_v1);
-unseen URLs are enriched per-URL with `hatch-zeitgeist --post-url`,
-which returns the numeric post_id, full caption, author,
-creation_time and thumbnail. Dedup for fanout URLs uses a historical
-URL->media_id map built from all prior ig-collection-new-*.json /
-ig-fanout-new-*.json files in the data dir, checked against
-state.json seen_posts. Stories URLs (/stories/<user>/<id>/) from
-`posts` are dropped.
+FORMAT NOTE — the connector's saved-posts shape nests each post under
+`media` (author / caption / permalink / media_id / created_at); the
+simplify function below maps that shape, with a flat-shape fallback.
+Fanout `posts` returns URL-only records (social_posts_v1); unseen URLs
+are enriched per-URL with `hatch-zeitgeist --post-url`, which returns
+the numeric post_id, full caption, author, creation_time and thumbnail.
+Dedup for fanout URLs uses a historical URL->media_id map built from
+all prior ig-collection-new-*.json / ig-fanout-new-*.json files in the
+data dir, checked against state.json seen_posts. Stories URLs
+(/stories/<user>/<id>/) from `posts` are dropped.
 
-1. Paginate saved-posts for collection YOUR_IG_COLLECTION_ID until ~50 posts.
+1. Paginate saved-posts for the COLLECTION until ~50 posts.
 2. Fan out to distinct posters from today's collection pull.
 3. Dedupe against state.json seen_posts keys; enrich unseen fanout URLs
    via hatch-zeitgeist; write new unseen posts.

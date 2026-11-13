@@ -21,6 +21,7 @@ import { igMentionCounterLabel, shouldShowIgMentionCounter } from "./igMentionCo
 import { formatFollowerCount } from "./igSources";
 import { sortEventOccurrences, type EventSortMode, type UserCoordinates } from "./eventSorting";
 import { appPreferencesStore, createSessionFilters, probeBrowserLocalStorage, type AppView, type DateFilter } from "./localPreferences";
+import { CITY_TIME_ZONE, MID_MANHATTAN_ANCHOR, PREFERRED_MANHATTAN_BOUNDS } from "./cityConfig";
 import { applyTheme, THEME_OPTIONS, type ThemeId } from "./themes";
 import { NavigationStack, useNavigationStack } from "./navigationStack";
 import {
@@ -107,7 +108,7 @@ const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 function nycToday(): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
+    timeZone: CITY_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -237,14 +238,14 @@ function calendarEntriesOn(occurrences: EventOccurrence[], day: string): EventOc
 function syncedAtLabel(value: string): string {
   const date = new Date(value);
   const dateParts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
+    timeZone: CITY_TIME_ZONE,
     weekday: "short",
     month: "short",
     day: "numeric",
   }).formatToParts(date);
   const get = (type: Intl.DateTimeFormatPartTypes) => dateParts.find((part) => part.type === type)?.value ?? "";
   const time = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
+    timeZone: CITY_TIME_ZONE,
     hour: "numeric",
     minute: "2-digit",
   }).format(date);
@@ -2143,17 +2144,6 @@ const SELECTED_PIN_ZOOM = 15;
 // Below this level the city-wide density makes persistent titles noisy. At and
 // above it, collision detection decides which wrapped labels have room.
 const PIN_TITLE_MIN_ZOOM = 15;
-
-// Every map uses a familiar Midtown reference point whenever an event falls
-// outside the user's Manhattan-first browsing area. The outlying event and
-// Midtown are then guaranteed to share the initial viewport.
-const MID_MANHATTAN_ANCHOR: MapAnchor = { lat: 40.758, lng: -73.9855 };
-const PREFERRED_MANHATTAN_BOUNDS = {
-  south: 40.70,
-  north: 40.88,
-  west: -74.02,
-  east: -73.925,
-};
 
 function isOutsidePreferredManhattanBounds(event: EventItem): boolean {
   if (event.lat === null || event.lng === null) return false;

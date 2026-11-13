@@ -25,8 +25,8 @@ Usage: python3 dedupe-contained-occurrences.py [--check]
            otherwise removes them and rewrites events.json.
 """
 import json
-import sys
 import os
+import sys
 
 BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data') + '/'
 PATH = BASE + 'events.json'

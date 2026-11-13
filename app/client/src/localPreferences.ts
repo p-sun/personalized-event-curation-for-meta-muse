@@ -1,4 +1,7 @@
 import { DEFAULT_THEME_ID, isThemeId, type ThemeId } from "./themes";
+import { CITY_TIME_ZONE, PREFERENCES_STORAGE_KEY } from "./cityConfig";
+
+export { PREFERENCES_STORAGE_KEY };
 
 export type DateFilter = "today" | "tomorrow" | "week" | "future" | "calendar";
 
@@ -82,8 +85,6 @@ type HydrationResult =
   | { ok: true; preferences: AppPreferences }
   | { ok: false; reason: string };
 
-export const PREFERENCES_STORAGE_KEY = "nyc-things-to-do:preferences:v2";
-
 export const DEFAULT_PREFERENCES: AppPreferences = {
   settings: {
     theme: DEFAULT_THEME_ID,
@@ -127,7 +128,7 @@ function isSavedLocation(value: unknown): value is AppPreferences["settings"]["l
 
 function nycDateParts(now: Date): { date: string; hour: number } {
   const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
+    timeZone: CITY_TIME_ZONE,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

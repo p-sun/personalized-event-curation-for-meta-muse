@@ -19,12 +19,12 @@ Without --apply it is a dry run: it prints the cohort and writes nothing.
 import argparse
 import calendar as cal
 import json
+import os
 import sys
 from datetime import date
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import checkpoint
-import os
 
 WORK = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
 

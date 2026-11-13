@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 const appSource = await Bun.file(new URL("./App.tsx", import.meta.url)).text();
 const preferencesSource = await Bun.file(new URL("./localPreferences.ts", import.meta.url)).text();
+const cityConfigSource = await Bun.file(new URL("./cityConfig.ts", import.meta.url)).text();
 
 const appComponent = appSource.slice(appSource.indexOf("export function App()"));
 const saveEffect = appComponent.slice(
@@ -39,7 +40,8 @@ describe("local preference wiring", () => {
 
     expect(appComponent).toContain("restoreSharedUserLocation(preferences.settings.lastKnownLocation)");
     expect(saveEffect).toContain("lastKnownLocation: appUserLocation.position");
-    expect(preferencesSource).toContain('export const PREFERENCES_STORAGE_KEY = "nyc-things-to-do:preferences:v2"');
+    expect(cityConfigSource).toContain('export const PREFERENCES_STORAGE_KEY = "nyc-things-to-do:preferences:v2"');
+    expect(preferencesSource).toContain('from "./cityConfig"');
   });
 
   test("filters are session-only: initialized from the session factory and never saved", () => {

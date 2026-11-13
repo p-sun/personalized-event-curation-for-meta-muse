@@ -1,0 +1,32 @@
+[
+ {
+  "id": "location:5269766572746f6e20436974792048616c6c20506c617a61",
+  "name": "Riverton City Hall Plaza",
+  "addresses": [
+   "100 Main St, Riverton"
+  ],
+  "lat": 41.8781,
+  "lng": -87.6298,
+  "website_url": null
+ },
+ {
+  "id": "location:546865204f6c64204d696c6c2047616c6c657279",
+  "name": "The Old Mill Gallery",
+  "addresses": [
+   "42 Mill Race Lane, Riverton"
+  ],
+  "lat": 41.8842,
+  "lng": -87.6201,
+  "website_url": "https://example.com/old-mill-gallery"
+ },
+ {
+  "id": "location:486172626f7276696577204d61726b65742048616c6c",
+  "name": "Harborview Market Hall",
+  "addresses": [
+   "7 Dock St, Riverton"
+  ],
+  "lat": 41.8719,
+  "lng": -87.6185,
+  "website_url": null
+ }
+]

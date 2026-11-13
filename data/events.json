@@ -1,0 +1,153 @@
+[
+ {
+  "id": "riverton-winter-market-opening",
+  "title": "Riverton Winter Market — Opening Day",
+  "venue": "Harborview Market Hall",
+  "address": "7 Dock St, Riverton",
+  "lat": 41.8719,
+  "lng": -87.6185,
+  "location_id": "location:486172626f7276696577204d61726b65742048616c6c",
+  "category": "market",
+  "is_free": true,
+  "price_text": "Free",
+  "description": "Forty local makers open the winter market season; first 100 visitors get a free tote.",
+  "official_url": "https://example.com/winter-market",
+  "source_url": "https://example.com/winter-market",
+  "image_url": null,
+  "ig_mention_count": 3,
+  "occurrences": [
+   {
+    "id": "riverton-winter-market-opening",
+    "start_date": "2026-11-14",
+    "end_date": "2026-11-14",
+    "times_text": "Sat, Nov 14 · 10am–4pm",
+    "start_time": "10:00",
+    "end_time": "16:00"
+   }
+  ]
+ },
+ {
+  "id": "riverton-light-installation",
+  "title": "Riverlight: A Light Installation on the Plaza",
+  "venue": "Riverton City Hall Plaza",
+  "address": "100 Main St, Riverton",
+  "lat": 41.8781,
+  "lng": -87.6298,
+  "location_id": "location:5269766572746f6e20436974792048616c6c20506c617a61",
+  "category": "exhibition",
+  "is_free": true,
+  "price_text": "Free",
+  "description": "A walk-through light installation on the plaza, on view all winter.",
+  "official_url": "https://example.com/riverlight",
+  "source_url": "https://example.com/riverlight",
+  "image_url": null,
+  "ig_mention_count": 0,
+  "occurrences": [
+   {
+    "id": "riverton-light-installation",
+    "start_date": "2026-11-14",
+    "end_date": "2027-01-03",
+    "times_text": "Sat, Nov 14 – Sun, Jan 3"
+   }
+  ]
+ },
+ {
+  "id": "riverton-pottery-open-studio",
+  "title": "Pottery Open Studio",
+  "venue": "The Old Mill Gallery",
+  "address": "42 Mill Race Lane, Riverton",
+  "lat": 41.8842,
+  "lng": -87.6201,
+  "location_id": "location:546865204f6c64204d696c6c2047616c6c657279",
+  "category": "workshop",
+  "is_free": true,
+  "price_text": "Free",
+  "description": "Watch the resident potters work and try the wheel. Every Saturday.",
+  "official_url": "https://example.com/old-mill-gallery",
+  "source_url": "https://example.com/old-mill-gallery",
+  "image_url": null,
+  "ig_mention_count": 0,
+  "recurrence": {
+   "frequency": "weekly",
+   "days_of_week": [
+    "Saturday"
+   ],
+   "first_date": "2026-11-14",
+   "last_date": "2026-12-19",
+   "start_time": "11:00",
+   "end_time": "13:00"
+  },
+  "occurrences": [
+   {
+    "id": "riverton-pottery-open-studio-2026-11-14",
+    "start_date": "2026-11-14",
+    "end_date": "2026-11-14",
+    "times_text": "Sat, Nov 14 · 11am–1pm",
+    "start_time": "11:00",
+    "end_time": "13:00"
+   },
+   {
+    "id": "riverton-pottery-open-studio-2026-11-21",
+    "start_date": "2026-11-21",
+    "end_date": "2026-11-21",
+    "times_text": "Sat, Nov 21 · 11am–1pm",
+    "start_time": "11:00",
+    "end_time": "13:00"
+   }
+  ]
+ },
+ {
+  "id": "riverton-sample-sale",
+  "title": "Harborview Sample Sale",
+  "venue": "Harborview Market Hall",
+  "address": "7 Dock St, Riverton",
+  "lat": 41.8719,
+  "lng": -87.6185,
+  "location_id": "location:486172626f7276696577204d61726b65742048616c6c",
+  "category": "pop-up",
+  "is_free": true,
+  "price_text": "Free entry",
+  "description": "Two-day sample sale from local designers; free entry, complimentary coffee.",
+  "official_url": "https://example.com/sample-sale",
+  "source_url": "https://example.com/sample-sale",
+  "image_url": null,
+  "ig_mention_count": 1,
+  "occurrences": [
+   {
+    "id": "riverton-sample-sale",
+    "start_date": "2026-11-20",
+    "end_date": "2026-11-21",
+    "times_text": "Fri, Nov 20 – Sat, Nov 21 · 11am–7pm",
+    "start_time": "11:00",
+    "end_time": "19:00"
+   }
+  ]
+ },
+ {
+  "id": "riverton-jazz-brunch",
+  "title": "Jazz Brunch at the Mill",
+  "venue": "The Old Mill Gallery",
+  "address": "42 Mill Race Lane, Riverton",
+  "lat": 41.8842,
+  "lng": -87.6201,
+  "location_id": "location:546865204f6c64204d696c6c2047616c6c657279",
+  "category": "food",
+  "is_free": false,
+  "price_text": "$18",
+  "description": "A ticketed brunch with a live trio — an example of a paid listing in the schema.",
+  "official_url": "https://example.com/old-mill-gallery",
+  "source_url": "https://example.com/old-mill-gallery",
+  "image_url": null,
+  "ig_mention_count": 0,
+  "occurrences": [
+   {
+    "id": "riverton-jazz-brunch",
+    "start_date": "2026-11-15",
+    "end_date": "2026-11-15",
+    "times_text": "Sun, Nov 15 · 11am–2pm",
+    "start_time": "11:00",
+    "end_time": "14:00"
+   }
+  ]
+ }
+]

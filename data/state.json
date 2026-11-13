@@ -1,0 +1,12 @@
+{
+ "note": "Every Instagram post that has been processed once. Refresh runs must skip these post IDs entirely — never re-extract from them.",
+ "seen_posts": {
+  "00000000000000001": {
+   "events": [
+    "riverton-winter-market-opening"
+   ],
+   "processed_at": "2026-11-14"
+  }
+ },
+ "events": {}
+}

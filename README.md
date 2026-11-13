@@ -13,6 +13,6 @@ The working code for a personal "things to do in [your city]" app — a map + fe
 
 ## Start here
 
-Follow [INSTALL.md](INSTALL.md): clone this repo, hand `app/` to your Muse, load the sample data, verify the render. The full kit — the onboarding questions, the playbook template, the morning routine, the source-adapter contract — lives on the kit page: https://muse.ai/s/things-to-do-rebuild-kit-xlxw6wikxkxtxq5b/fRQmOKehIjjLu7EktO5T1xITJPV444fVBwt9MnBPEao
+Follow [INSTALL.md](INSTALL.md): clone this repo, hand `app/` to your Muse, load the sample data, verify the render. The full kit — the onboarding questions, the playbook template, the morning routine, the source-adapter contract — is the kit site: https://p-sun.github.io/personalized-event-curation-for-meta-muse/ (its source is [docs/index.md](docs/index.md) in this repo, published via GitHub Pages).
 
 No real data is in here: no one's events, accounts, or source lists. The taste, the sources, and the city are yours to supply.

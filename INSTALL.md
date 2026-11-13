@@ -7,7 +7,7 @@ playbook template, and the onboarding: the kit explains *how the system
 runs*; this bundle *is* the system. The kit lives in this same
 repository at `docs/index.md`, published at
 https://p-sun.github.io/personalized-event-curation-for-meta-muse/ —
-start there: run its onboarding (Part F) before this install, because
+start there: run its onboarding (Part E) before this install, because
 the answers decide the playbook and the settings this install applies.
 
 ## Contents

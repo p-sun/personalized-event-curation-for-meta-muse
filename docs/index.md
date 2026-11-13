@@ -13,15 +13,15 @@ Build your own personal "things to do in [your city]" app — map, feed, and a m
 
 ## How to use this kit — for the receiving Muse
 
-You are setting up a personal local-events app and daily curation pipeline for your user, in their city. First run the onboarding in Part F and record the answers in the playbook (Part E); the few answers that are code settings — the map's centre and bounds, the landing-day timezone, the app's name — are applied at the exact spots Part A's "Make it yours" names. Complete the onboarding before installing. Then follow the build order in Part F. Throughout, keep the deterministic-engine principle: inclusion rules are decided in code, in one publish filter, and curation applies the playbook as written.
+You are setting up a personal local-events app and daily curation pipeline for your user, in their city. First run the onboarding, which lives in the playbook itself (Part E — each field carries the question to ask), following the short setup protocol in Part F; the few answers that are code settings — the map's centre and bounds, the landing-day timezone, the app's name — are applied at the exact spots Part A's "Make it yours" names. Complete the onboarding before installing. Then follow the build order in Part F. Throughout, keep the deterministic-engine principle: inclusion rules are decided in code, in one publish filter, and curation applies the playbook as written.
 
 If documents disagree: this kit governs process and rules, INSTALL.md governs the install's file-level steps, and the shipped code is the final reference for engine behavior.
 
 **Reading order — start here.** Work through the kit in this order, which is not the order the parts are printed in:
 
-1. **Part F** — run the onboarding first.
+1. **Part F** — the setup protocol: read it first; it points you at the onboarding.
 2. **Part A** — install the app from the code bundle and verify it against the sample data.
-3. **Part E** — write the playbook with the user from their answers.
+3. **Part E** — the onboarding: work through the playbook with the user, field by field, and fill it in.
 4. **Parts C and D** — set up the curation engine and source adapters for the daily routine. Part B is the data reference throughout.
 
 **Prerequisites — have these ready before onboarding:**
@@ -67,7 +67,7 @@ The bundle (the repository's contents) carries the whole system:
 - `scripts/` — the curation engine as working code: the publish filter, the duplicate and recurrence validators, the materializers, checkpointing, the retention prune, a sample-data re-anchoring script, an Instagram pull kept as the reference implementation of the collection adapter, and the scripts' own tests.
 - `INSTALL.md` — the bundle's own copy of these install steps.
 
-The bundle ships the fullstack build. A static build — the same client over a baked-in JSON snapshot — is **OPTIONAL**, only if the user chose a shareable version during onboarding (Part F): the fullstack app has database access and live data, but it is private and cannot be given a public link; the static build is the only one that can be shared via a public link, and its data is a frozen snapshot that updates only when someone manually rebuilds and re-shares it. The client's data seam is a single module, `app/client/src/data.ts`: it makes exactly three no-argument list calls — events (returning `{events, favorite_ids, last_synced_at}`), locations, and IG sources — and all filtering happens client-side over the full lists. The static variant replaces that one file's implementation with the baked snapshot (alongside the build-mode flag in `app/client/src/buildMode.ts`). That seam is also what makes the build order in Part F work in phases: anything that can produce those three list shapes — the server actions, a snapshot, the sample dataset — can stand behind the client.
+The bundle ships the fullstack build. A static build — the same client over a baked-in JSON snapshot — is **OPTIONAL**, only if the user chose a shareable version during onboarding (Part E): the fullstack app has database access and live data, but it is private and cannot be given a public link; the static build is the only one that can be shared via a public link, and its data is a frozen snapshot that updates only when someone manually rebuilds and re-shares it. The client's data seam is a single module, `app/client/src/data.ts`: it makes exactly three no-argument list calls — events (returning `{events, favorite_ids, last_synced_at}`), locations, and IG sources — and all filtering happens client-side over the full lists. The static variant replaces that one file's implementation with the baked snapshot (alongside the build-mode flag in `app/client/src/buildMode.ts`). That seam is also what makes the build order in Part F work in phases: anything that can produce those three list shapes — the server actions, a snapshot, the sample dataset — can stand behind the client.
 
 **The reference build is live.** The same code and pipeline, running on the author's own city, is public: [NYC Things To Do](https://muse.ai/s/nyc-things-to-do-2-ec5xx6xubpxjrxw/Q09_-sx691X2iT4vGbamqRlNT4AJLFcgyQ8CsezsiGg). It is a manually published snapshot, so it shows a recent morning's data rather than this minute's. Open it to see the finished behavior — during Phase 1, compare your install against it screen by screen.
 
@@ -336,14 +336,15 @@ Scrapers are the fragile layer of the whole system — a site redesign breaks it
 
 ---
 
-## Part E · Playbook template
+## Part E · Playbook — the onboarding lives here
 
 ### The file your Muse writes with you
 
-Create this playbook from the onboarding answers and treat it as the single home for taste and sources. The engine reads it; mornings follow it. Fill every bracket — an empty bracket is an unmade decision.
+This template is the onboarding — there is no separate interview script. Work through it with the user conversationally, field by field: each field carries the question to ask, or is marked shipped, defaulted, or fixed so no question is needed. You are setting the user up, not testing or grilling them — explain how things work as you go, follow up only where an answer is too vague to build from, and use the defaults for anything the user doesn't care about. Write the answers in as you go, and treat the finished playbook as the single home for taste and sources: the engine reads it; mornings follow it. Fill every bracket — an empty bracket is an unmade decision.
 
 ```text
 City
+  Ask: what city and area should this cover?
   [city and area, map centre coordinates, default zoom]
 
 Views
@@ -351,13 +352,21 @@ Views
    and the app opens on A by default [fixed — not a choice]
 
 Sharing
+  Ask, explaining the trade-off first: the fullstack app has database
+   access and live data updated every morning, but it is private; the
+   static build is the only one that can be shared via a public link,
+   and it is a frozen snapshot that only updates when someone manually
+   rebuilds and re-shares it. Default: fullstack only — add static
+   later if sharing is wanted.
   [fullstack only / fullstack + static public build]
 
 Inclusion rules
+  Ask: what kinds of things would you love to hear about?
   [kinds of events wanted — for example: free events and pop-ups;
    special, dated things only]
 
 Exclusions
+  Ask: what should this always leave out?
   [for example: concerts, children's programming, online-only,
    generic recurring listings]
 
@@ -368,9 +377,11 @@ Weekday daytime rule
    it as shipped, or record the change you made in the filter]
 
 Retention window
-  [default 2 months]
+  [default 2 months — no need to ask unless the user wants a
+   different window]
 
 Run time
+  Ask: when should the morning curation run?
   [local time and timezone]
 
 Image priority
@@ -378,10 +389,22 @@ Image priority
    (fixed; note any exception here)]
 
 Sources
+  Ask: where do you hear about things now — what sites, accounts,
+   newsletters, or places do you already check? And do you use
+   Instagram to find things to do — would you like to feed this
+   from there? If Instagram is in play, teach the mechanism, don't
+   just ask: the user can keep an Instagram saved collection for
+   this, saving any post about an event they might want to go to
+   into it (call it "Things to do", for example); each morning the
+   curation pulls new saves from that collection, and Muse can
+   create the collection for them if they want. The curation also
+   watches the accounts whose posts land in the collection, so
+   things can surface even when nothing was saved.
   [Instagram collection name; aggregator accounts; fetcher sites
    with script names; rotating venues]
 
 Report format
+  Ask: what would you like the morning message to look like?
   [what the morning message must include (start from Part C, step 13)]
 ```
 
@@ -439,21 +462,11 @@ Report format
 
 ---
 
-## Part F · Onboarding — for the receiving Muse
+## Part F · Setup protocol and build order — for the receiving Muse
 
-### Getting set up — a few free-form questions. Then build.
+### How setup runs
 
-This is onboarding, not an interview: you are setting the user up, not testing or grilling them. Welcome them, ask these questions conversationally, and explain how things work as you go — the Instagram note in question 5 is the model: teach the mechanism, don't just ask about it. Most things have sensible defaults, so follow up only where an answer is too vague to build from, and use the kit's defaults for anything the user doesn't care about. Write the answers into the playbook (Part E) and the app config as you go, and do not start building until you have enough to fill the playbook.
-
-1. **Where?** What city and area should this cover?
-2. **What do you want to find?** What kinds of things would you love to hear about?
-3. **What do you never want?** What should this always leave out?
-4. **Where do you hear about things now?** What sites, accounts, newsletters, or places do you already check?
-5. **Instagram?** Do you use Instagram to find things to do — and would you like to feed this from there?
-   > Teach this, don't just ask: you can keep an Instagram saved collection for this — whenever you see a post about an event you might want to go to, save it into a collection (call it "Things to do", for example). Each morning, the curation pulls new saves from that collection. If you don't have a collection like that, Muse can create a "things to do" collection for you, if you want. The morning curation doesn't just pull the collection, either — it also watches the accounts whose posts land in it for new events, so things can surface even when you haven't saved them yourself.
-6. **Mornings?** When should the morning curation run, and what would you like the morning message to look like?
-7. **Do you want a shareable version?** The fullstack app has database access and live data updated every morning, but it is private; the static build is the only one that can be shared via a public link, and it is a frozen snapshot that only updates when someone manually rebuilds and re-shares it.
-
+Setup is a conversation, not an interview, and it has no separate script: the playbook (Part E) is the interview — each field carries its question, its default, or a note that it is shipped or fixed. Read this part first for the protocol, then work through Part E with the user: welcome them, explain how things work as you go (the Instagram note under Sources is the model — teach the mechanism, don't just ask about it), and write the answers into the playbook and the app config as you go. Do not start building until the playbook is filled.
 
 **Closing step, before building.** Ask the user to authorise the map's external requests in their own words — the app loads OpenStreetMap tiles for location-based map moves and links directions out to Google Maps over plain HTTPS — and carry that sentence verbatim into the build request. A second-hand summary is not accepted by the audit.
 

@@ -9,7 +9,7 @@ Build your own personal "things to do in [your city]" app — map, feed, and a m
 
 > **What you are holding.** Two things that work as one kit. (1) This document: the install, the data model, the curation engine, the source-adapter contract, a blank playbook, and a setup onboarding. (2) A code bundle — the working app and engine scripts — in the same public GitHub repository as this document: this file is `docs/index.md` in it, and the bundle is the rest of the repo. The app is installed from the code, not rebuilt from a specification. Give this whole document to your Muse and ask it to start with Part F.
 
-> **What is not in here.** Anyone else's data. No real events, no account names, no source lists. The bundle's sample data is invented — five events in a fictional city — so the site renders the moment it is installed. Every personal choice is a blank your Muse fills in with you during onboarding. Your dataset starts with the samples, and they are deleted the moment the install is verified.
+> **What is not in here.** Anyone else's data. No real events, no account names, no source lists. The bundle's sample data is invented — five events in a fictional city — so the site renders the moment it is installed. Every personal choice is a blank your Muse fills in with you during onboarding. Your dataset starts with the samples; they stay loaded while you adapt the app and are deleted when your first real events replace them.
 
 ## How to use this kit — for the receiving Muse
 

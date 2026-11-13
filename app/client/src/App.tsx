@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { SafeAreaTopScrim } from "@hatch/space-sdk/client";
 import * as L from "leaflet";
 import { createPortal } from "react-dom";
-import { api, type ApiResponse } from "./api";
+import { listEvents, listIgSources, listLocations, type EventsData, type IgSourcesData, type LocationsData } from "./data";
 import { EventImage, hasEventImage } from "./EventImage";
 import { IconButton, PopupMenu, StyledButton, ToggleButton, usePresenceTransition } from "./ui";
 import { googleMapsDirectionsUrl } from "./googleMaps";
@@ -46,10 +46,10 @@ type TrayPosition,
 type TraySnapDefinition,
 } from "./trayPhysics";
 
-type ServerEventItem = ApiResponse<typeof api, "list_events">["events"][number];
+type ServerEventItem = EventsData["events"][number];
 type EventItem = ServerEventItem & { is_favorite: boolean; is_hidden: boolean };
-type LocationItem = ApiResponse<typeof api, "list_locations">["locations"][number];
-type IGSourceItem = ApiResponse<typeof api, "list_ig_sources">["sources"][number];
+type LocationItem = LocationsData["locations"][number];
+type IGSourceItem = IgSourcesData["sources"][number];
 type OccurrenceItem = EventItem["occurrences"][number];
 type LocationMap = Map<string, LocationItem>;
 type LocationEventCounts = Map<string, number>;
@@ -3470,7 +3470,7 @@ function IGSourceRow({ source }: { source: IGSourceItem }) {
 }
 
 function IGSourcesView({ onBack }: { onBack: () => void }) {
-  const sourcesQuery = useQuery({ queryKey: ["ig-sources"], queryFn: () => api.list_ig_sources({}) });
+  const sourcesQuery = useQuery({ queryKey: ["ig-sources"], queryFn: () => listIgSources() });
   const sources = sourcesQuery.data?.sources ?? [];
 
   return (
@@ -3662,8 +3662,8 @@ export function App() {
   const [hiddenIds, setHiddenIds] = useState(() => new Set(initialPreferences.eventState.hiddenIds));
   const [serverFavoritesMigrated, setServerFavoritesMigrated] = useState(initialPreferences.eventState.serverFavoritesMigrated);
   const today = nycToday();
-  const query = useQuery({ queryKey: ["events"], queryFn: () => api.list_events({}) });
-  const locationsQuery = useQuery({ queryKey: ["locations"], queryFn: () => api.list_locations({}) });
+  const query = useQuery({ queryKey: ["events"], queryFn: () => listEvents() });
+  const locationsQuery = useQuery({ queryKey: ["locations"], queryFn: () => listLocations() });
   const events = useMemo<EventItem[]>(
     () => (query.data?.events ?? []).map((event) => ({
       ...event,

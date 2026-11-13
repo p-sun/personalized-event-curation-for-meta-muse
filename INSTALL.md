@@ -62,10 +62,17 @@ asset files, restored from the npm dependencies at install (step 3).
      `sora-latin-wght-normal.woff2` into `app/client/src/assets/`.
    These are the libraries' own files, byte-identical to the ones the
    app ships with.
-4. Rebase the sample dates: the sample occurrences sit in the week of
-   Nov 14–21, 2026. Shift them onto the current week before loading, so
-   the landing view (today) has events in it — keep each occurrence's
-   dates and `times_text` consistent when you shift.
+4. Re-anchor the sample dates: run
+   `python3 scripts/redate_sample_data.py --data data`. The samples are
+   a fixture whose dates are designed relative to an anchor day (an
+   event that day, a span crossing it, a weekly recurrence, more over
+   the following days); the script shifts every date — occurrences,
+   recurrence rules, and the dates inside `times_text` — so the anchor
+   day becomes today and the landing view has events in it. The samples
+   in this bundle were already re-anchored when it was packaged; re-run
+   the script whenever they have gone stale. Freshness is produced by
+   re-running the data's producer, never by the app adjusting dates at
+   read time — real datasets work the same way (re-run the refresh).
 5. Load the sample data through the app's actions: `replace_locations`
    with the full set from `data/locations.json`, then `replace_events`
    with `data/events.json`. (The location action takes the complete set

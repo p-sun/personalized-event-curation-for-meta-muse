@@ -18,9 +18,9 @@
   "occurrences": [
    {
     "id": "riverton-winter-market-opening",
-    "start_date": "2026-11-14",
-    "end_date": "2026-11-14",
-    "times_text": "Sat, Nov 14 · 10am–4pm",
+    "start_date": "2026-11-13",
+    "end_date": "2026-11-13",
+    "times_text": "Fri, Nov 13 · 10am–4pm",
     "start_time": "10:00",
     "end_time": "16:00"
    }
@@ -45,9 +45,9 @@
   "occurrences": [
    {
     "id": "riverton-light-installation",
-    "start_date": "2026-11-14",
-    "end_date": "2027-01-03",
-    "times_text": "Sat, Nov 14 – Sun, Jan 3"
+    "start_date": "2026-11-13",
+    "end_date": "2027-01-02",
+    "times_text": "Fri, Nov 13 – Sat, Jan 2"
    }
   ]
  },
@@ -70,27 +70,27 @@
   "recurrence": {
    "frequency": "weekly",
    "days_of_week": [
-    "Saturday"
+    "Friday"
    ],
-   "first_date": "2026-11-14",
-   "last_date": "2026-12-19",
+   "first_date": "2026-11-13",
+   "last_date": "2026-12-18",
    "start_time": "11:00",
    "end_time": "13:00"
   },
   "occurrences": [
    {
-    "id": "riverton-pottery-open-studio-2026-11-14",
-    "start_date": "2026-11-14",
-    "end_date": "2026-11-14",
-    "times_text": "Sat, Nov 14 · 11am–1pm",
+    "id": "riverton-pottery-open-studio-2026-11-13",
+    "start_date": "2026-11-13",
+    "end_date": "2026-11-13",
+    "times_text": "Fri, Nov 13 · 11am–1pm",
     "start_time": "11:00",
     "end_time": "13:00"
    },
    {
-    "id": "riverton-pottery-open-studio-2026-11-21",
-    "start_date": "2026-11-21",
-    "end_date": "2026-11-21",
-    "times_text": "Sat, Nov 21 · 11am–1pm",
+    "id": "riverton-pottery-open-studio-2026-11-20",
+    "start_date": "2026-11-20",
+    "end_date": "2026-11-20",
+    "times_text": "Fri, Nov 20 · 11am–1pm",
     "start_time": "11:00",
     "end_time": "13:00"
    }
@@ -115,9 +115,9 @@
   "occurrences": [
    {
     "id": "riverton-sample-sale",
-    "start_date": "2026-11-20",
-    "end_date": "2026-11-21",
-    "times_text": "Fri, Nov 20 – Sat, Nov 21 · 11am–7pm",
+    "start_date": "2026-11-19",
+    "end_date": "2026-11-20",
+    "times_text": "Thu, Nov 19 – Fri, Nov 20 · 11am–7pm",
     "start_time": "11:00",
     "end_time": "19:00"
    }
@@ -142,9 +142,9 @@
   "occurrences": [
    {
     "id": "riverton-jazz-brunch",
-    "start_date": "2026-11-15",
-    "end_date": "2026-11-15",
-    "times_text": "Sun, Nov 15 · 11am–2pm",
+    "start_date": "2026-11-14",
+    "end_date": "2026-11-14",
+    "times_text": "Sat, Nov 14 · 11am–2pm",
     "start_time": "11:00",
     "end_time": "14:00"
    }

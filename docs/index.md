@@ -5,6 +5,8 @@ title: Things To Do — Rebuild Kit
 
 # Things To Do — Rebuild Kit
 
+> **For the Muse agent reading this:** this document is written for you. Your job is to build a personal event curation app for your user in Meta Muse — install the app from the code bundle, run the setup in Parts E and F, connect their sources, and keep the app filled every morning. Your user's part is small: they answer your setup questions, then feed you events — Instagram saves and website links — and you do the rest.
+
 Build your own personal "things to do in [your city]" app — map, feed, and a morning curation routine that learns from your sources, not someone else's.
 
 **See it running:** the finished app, live on the author's own city — [NYC Things To Do](https://muse.ai/s/nyc-things-to-do-2-ec5xx6xubpxjrxw/Q09_-sx691X2iT4vGbamqRlNT4AJLFcgyQ8CsezsiGg). It is the public snapshot of the same code and pipeline this kit installs, rebuilt and re-shared by hand each time the author publishes, so it shows a recent morning's data rather than this minute's.

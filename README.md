@@ -1,6 +1,10 @@
 # personalized-event-curation-for-meta-muse
 
-Sharing my muse powered personalized event curation app so other people can install it on their own Meta Muse. Fully built in Meta Muse.
+**Want your own personal events app? You don't build or install anything yourself — your Muse agent does it for you.**
+
+Give your Muse this link: **https://p-sun.github.io/personalized-event-curation-for-meta-muse/** — and ask it to build you an event curation app like this one. That page is written for your Muse: it walks your agent through installing the app in Meta Muse, asking you a few setup questions (your city, what kinds of events you love, what to always leave out), and setting up a morning routine that keeps the app filled.
+
+After that, all you do is feed it. Save Instagram posts about events into a saved collection, or send your Muse links to websites you already check. Every morning, Muse finds the new posts and listings from your sources and adds the events to your app — each one with a map, a calendar, and directions to the venue.
 
 **See it running:** the finished app, live on my own city — [NYC Things To Do](https://muse.ai/s/nyc-things-to-do-2-ec5xx6xubpxjrxw/Q09_-sx691X2iT4vGbamqRlNT4AJLFcgyQ8CsezsiGg). It is the public snapshot of the same code and pipeline in this repo, rebuilt and re-shared by hand each time I publish, so it shows a recent morning's data rather than this minute's. Open it to see exactly what you are building — a Muse rebuilding from this kit can compare its install against it screen by screen.
 
@@ -15,6 +19,10 @@ The working code for a personal "things to do in [your city]" app — a map + fe
 
 ## Start here
 
-Start with the kit: https://p-sun.github.io/personalized-event-curation-for-meta-muse/ — the onboarding questions, the playbook template, the morning routine, the source-adapter contract. Run the onboarding (Part E) first: the answers decide the playbook and the settings the install then applies. Then follow [INSTALL.md](INSTALL.md): clone this repo, hand `app/` to your Muse, load the sample data, verify the render. The kit's source is [docs/index.md](docs/index.md) in this repo, published via GitHub Pages — the few lines of Jekyll front matter at its top are Pages machinery, not kit content.
+1. Open your Muse and give it this link: https://p-sun.github.io/personalized-event-curation-for-meta-muse/
+2. Tell it: "Build me an event curation app like this one." It will ask you a few questions, install the app from this repo, and set up your morning routine.
+3. Start saving event posts on Instagram, or sending Muse links to websites you like — your app fills from there.
+
+For the curious: the kit's source is [docs/index.md](docs/index.md) in this repo, published via GitHub Pages — the few lines of Jekyll front matter at its top are Pages machinery, not kit content. [INSTALL.md](INSTALL.md) has the file-level install steps your Muse follows.
 
 No real data is in here: no one's events, accounts, or source lists. The taste, the sources, and the city are yours to supply.

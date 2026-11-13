@@ -2,7 +2,7 @@
 """
 publish_filter.py — the SINGLE decision point for the 4pm publish rule.
 
-Architecture (approved 2026-09-23): events.json holds ALL curated events,
+Architecture: events.json holds ALL curated events,
 including ones that violate the 4pm rule. Fetchers and curation never make
 4pm decisions — they emit candidates with accurate times_text. This module
 alone decides what reaches the website, applied once when building the

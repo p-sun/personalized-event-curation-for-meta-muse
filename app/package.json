@@ -1,5 +1,5 @@
 {
-  "name": "hatch-ts-space-nyc-things-to-do",
+  "name": "things-to-do-app",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.10",

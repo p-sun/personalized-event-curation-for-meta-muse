@@ -4,7 +4,11 @@ The working code for a "things to do" site and its morning curation
 pipeline, packaged to install from — no rebuild from a specification.
 Pair it with the Rebuild Kit document, which carries the routine, the
 playbook template, and the onboarding: the kit explains *how the system
-runs*; this bundle *is* the system.
+runs*; this bundle *is* the system. The kit lives in this same
+repository at `docs/index.md`, published at
+https://p-sun.github.io/personalized-event-curation-for-meta-muse/ —
+start there: run its onboarding (Part F) before this install, because
+the answers decide the playbook and the settings this install applies.
 
 ## Contents
 
@@ -14,7 +18,8 @@ runs*; this bundle *is* the system.
   `app/package.json` lists the dependencies; `bun.lock` pins them.
 - `data/` — sample data in the exact production schema: five invented
   events and three venues in a fictional city (Riverton), a starter
-  `state.json`, and two sample Instagram sources. This data exists so the
+  `state.json`, an empty `dropped-links.json` queue, and two sample
+  Instagram sources. This data exists so the
   site renders end-to-end the moment it is installed, and so every later
   record has a shape to match.
 - `scripts/` — the curation engine: the publish filter, duplicate and
@@ -34,16 +39,16 @@ asset files, restored from the npm dependencies at install (step 3).
 1. Get the bundle. Clone the repository:
    `git clone https://github.com/p-sun/personalized-event-curation-for-meta-muse`
    — the repo root is the bundle root (`app/`, `data/`, `scripts/`,
-   this file). If you received the bundle as a zip file instead, verify
-   the zip's MD5 against the value printed wherever the zip was
-   published before unzipping; on a mismatch, extract again rather than
-   repairing bytes by hand.
+   this file).
 2. Hand `app/` to your Muse and ask it to create the fullstack web
    artifact from this source (its builder mints the artifact identity
    and installs dependencies from `app/package.json`; there is nothing
-   to configure in the tree).
-3. Restore the library assets (repository installs only — the zip
-   already contains them). The repository stores text only, so seven
+   to configure in the tree). One dependency is worth knowing about:
+   `app/package.json` references the Muse runtime SDK by an absolute
+   path (`file:/opt/hatch/…`) — the platform's own package inside your
+   Muse environment; if dependency resolution ever fails, that path is
+   the first place to look.
+3. Restore the library assets. The repository stores text only, so seven
    binary asset files that ship inside the app's own npm dependencies
    are copied out of the installed tree, into the source, before the
    app is opened (if the client was already built, rebuild it after
@@ -84,7 +89,9 @@ asset files, restored from the npm dependencies at install (step 3).
   (`delete_event`; locations are replaced wholesale).
 - Set your Instagram account and collection IDs at the top of
   `scripts/ig_pull.py` (`YOUR_IG_USER_ID`, `YOUR_IG_COLLECTION_ID`), and
-  your own username where `enrich-ig-sources.py` asks for it.
+  your own username where `enrich-ig-sources.py` asks for it. The
+  `TODAY` / `SINCE` constants at the top of `ig_pull.py` are per-run
+  dates — set them fresh each run; they are not configuration.
 - Write your playbook (sources, inclusions, exclusions) from the kit's
   Part E template, and schedule the morning run around the routine in
   Part C of the kit.

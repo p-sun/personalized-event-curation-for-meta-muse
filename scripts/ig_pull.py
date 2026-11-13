@@ -3,28 +3,24 @@
 saved-collection + fanout adapter, kept as the template for the daily
 pull. Set ACCOUNT / COLLECTION / WORK for your own setup before use.
 
-RECOVERY NOTE — connector format change overnight (Nov 10 -> Nov 11):
-- `saved-posts` now returns posts nested under `media` (author/caption/
-  permalink/media_id/created_at) instead of the old flat shape. The
-  simplify function below maps the new shape (with flat-shape fallback).
-- `posts` (fanout) now returns URL-only records (format social_posts_v1):
-  no media id, no caption. Fanout URLs are enriched per-URL with
-  `hatch-zeitgeist --post-url <url> --raw`, which returns the numeric
-  post_id, full caption, author, creation_time and thumbnail.
-- Dedup for fanout URLs uses a historical URL->media_id map built from
-  all prior ig-collection-new-*.json / ig-fanout-new-*.json files on disk:
-  a URL seen before maps to its known media id (checked against
-  state.json seen_posts); a URL never seen before is new by definition
-  and gets enriched via zeitgeist.
-- Stories URLs (/stories/<user>/<id>/) from `posts` are dropped.
+FORMAT NOTE — the connector's saved-posts shape nests each post
+under `media` (author / caption / permalink / media_id / created_at);
+the simplify function below maps that shape, with a flat-shape
+fallback. Fanout `posts` returns URL-only records (social_posts_v1);
+unseen URLs are enriched per-URL with `hatch-zeitgeist --post-url`,
+which returns the numeric post_id, full caption, author,
+creation_time and thumbnail. Dedup for fanout URLs uses a historical
+URL->media_id map built from all prior ig-collection-new-*.json /
+ig-fanout-new-*.json files in the data dir, checked against
+state.json seen_posts. Stories URLs (/stories/<user>/<id>/) from
+`posts` are dropped.
 
 1. Paginate saved-posts for collection YOUR_IG_COLLECTION_ID until ~50 posts.
 2. Fan out to distinct posters from today's collection pull.
 3. Dedupe against state.json seen_posts keys; enrich unseen fanout URLs
    via hatch-zeitgeist; write new unseen posts.
-Stops immediately on auth errors, 429 rate limits, or privsep transport
-failures (caller reports); fanout file is checkpointed every 10 accounts
-so a partial pull survives (per 2026-10-19 incremental-persistence lesson).
+Stops immediately on auth errors, 429 rate limits, or transport failures (caller reports); fanout file is checkpointed every 10 accounts
+so a partial pull survives.
 """
 import json, os, subprocess, sys, time, glob
 from collections import Counter

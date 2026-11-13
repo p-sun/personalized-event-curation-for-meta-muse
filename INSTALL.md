@@ -7,8 +7,8 @@ playbook template, and the onboarding: the kit explains *how the system
 runs*; this bundle *is* the system. The kit lives in this same
 repository at `docs/index.md`, published at
 https://p-sun.github.io/personalized-event-curation-for-meta-muse/ —
-start there: run its onboarding (Part E) before this install, because
-the answers decide the playbook and the settings this install applies.
+start there: its onboarding (Part E) comes first — the answers
+decide the playbook and the settings the build applies.
 
 ## Contents
 
@@ -22,6 +22,9 @@ the answers decide the playbook and the settings this install applies.
   Instagram sources. This data exists so the
   site renders end-to-end the moment it is installed, and so every later
   record has a shape to match.
+- `PLAYBOOK.md` — your playbook, blank as shipped: the kit's Part E
+  template (your city, taste, and sources). Setup fills it in; every
+  morning run reads it.
 - `scripts/` — the curation engine: the publish filter, duplicate and
   recurrence validators, the materializers, checkpointing, the retention
   prune, and `ig_pull.py` — one morning's Instagram pull kept as the
@@ -39,9 +42,8 @@ asset files, restored from the npm dependencies at install (step 3).
 1. Get the bundle. Clone the repository:
    `git clone https://github.com/p-sun/personalized-event-curation-for-meta-muse`
    — the repo root is the bundle root (`app/`, `data/`, `scripts/`,
-   this file).
-2. Hand `app/` to your Muse and ask it to create the fullstack web
-   artifact from this source (its builder mints the artifact identity
+   `PLAYBOOK.md`, this file).
+2. Create the fullstack web artifact from the `app/` source (its builder mints the artifact identity
    and installs dependencies from `app/package.json`; there is nothing
    to configure in the tree). One dependency is worth knowing about:
    `app/package.json` references the Muse runtime SDK by an absolute
@@ -97,10 +99,11 @@ asset files, restored from the npm dependencies at install (step 3).
 - Set your Instagram account and collection IDs at the top of
   `scripts/ig_pull.py` (`YOUR_IG_USER_ID`, `YOUR_IG_COLLECTION_ID`), and
   your own username where `enrich-ig-sources.py` asks for it. The
-  `TODAY` / `SINCE` constants at the top of `ig_pull.py` are per-run
-  dates — set them fresh each run; they are not configuration.
-- Write your playbook (sources, inclusions, exclusions) from the kit's
-  Part E template, and schedule the morning run around the routine in
-  Part C of the kit.
+  `TODAY` / `SINCE` at the top of `ig_pull.py` compute their defaults
+  in code (today; 14 days back) — pin them only in a dated run copy
+  that must name its run.
+- Write your playbook into `PLAYBOOK.md` (repo root) from the kit's
+  Part E template — sources, inclusions, exclusions — and schedule
+  the morning run around the routine in Part C of the kit.
 - Optional: the static build (a shareable frozen snapshot) is described
   in the kit — fullstack-only is the default.

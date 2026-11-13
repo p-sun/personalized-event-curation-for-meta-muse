@@ -17,7 +17,7 @@ Build your own personal "things to do in [your city]" app — map, feed, and a m
 
 ## How to use this kit — for the receiving Muse
 
-You are setting up a personal local-events app and daily curation pipeline for your user, in their city. First run the onboarding, which lives in the playbook itself (Part E — each field carries the question to ask), following the short setup protocol in Part F; the few answers that are code settings — the map's centre and bounds, the landing-day timezone, the app's name — are applied at the exact spots Part A's "Make it yours" names. Complete the onboarding before installing. Then follow the build order in Part F. Throughout, keep the deterministic-engine principle: inclusion rules are decided in code, in one publish filter, and curation applies the playbook as written.
+You are setting up a personal local-events app and daily curation pipeline for your user, in their city. First run the onboarding, which lives in the playbook itself (Part E — each field carries the question to ask), following the short setup protocol in Part F; the few answers that are code settings — the map's centre and bounds, the landing-day timezone, the app's name — are applied at the exact spots Part A's "Make it yours" names. Then follow the build order in Part F: the install runs first, on sample data, and the onboarding answers are applied from Phase 2 on. Throughout, keep the deterministic-engine principle: inclusion rules are decided in code, in one publish filter, and curation applies the playbook as written.
 
 If documents disagree: this kit governs process and rules, INSTALL.md governs the install's file-level steps, and the shipped code is the final reference for engine behavior.
 
@@ -42,7 +42,7 @@ If documents disagree: this kit governs process and rules, INSTALL.md governs th
 
 The finished system has two halves that work as one. The app is a web app showing curated local events on a map and in a feed. The pipeline is a morning routine that pulls new candidates from sources you chose, curates each new item once, and publishes the result to the app.
 
-Nothing about the system is tied to one city. The city lives in configuration — a map centre, a default zoom, and the sources in your playbook. Change those and the same code curates a different place.
+Nothing about the system is tied to one city. The city lives in configuration — a map centre and the sources in your playbook. Change those and the same code curates a different place.
 
 ### Where candidates come from
 
@@ -81,7 +81,7 @@ Clone the repository: `git clone https://github.com/p-sun/personalized-event-cur
 
 ### Install
 
-1. **Create the app.** Hand `app/` to your Muse and ask it to create the fullstack web artifact from this source. Its builder mints the artifact identity and installs dependencies from `app/package.json`; there is nothing to configure in the tree. One dependency is worth knowing about: `app/package.json` references the Muse runtime SDK by an absolute path (`file:/opt/hatch/…`) — that is the platform's own package inside your Muse environment; if dependency resolution ever fails, that path is the first place to look.
+1. **Create the app.** Create the fullstack web artifact from the `app/` source. Its builder mints the artifact identity and installs dependencies from `app/package.json`; there is nothing to configure in the tree. One dependency is worth knowing about: `app/package.json` references the Muse runtime SDK by an absolute path (`file:/opt/hatch/…`) — that is the platform's own package inside your Muse environment; if dependency resolution ever fails, that path is the first place to look.
 2. **Restore the library assets.** The repository stores text only, so seven binary asset files are copied out of the installed dependencies into the source (the bundle's `INSTALL.md`, step 3, lists them exactly): Leaflet's five marker/layer PNGs from `app/node_modules/leaflet/dist/images/` into `app/client/src/images/`, and the Inter and Sora font files from the `@fontsource-variable` packages into `app/client/src/assets/`. They are the libraries' own files, byte-identical to the ones the app ships with. If the client was already built, rebuild it after copying.
 3. **Re-anchor the sample dates.** Run `python3 scripts/redate_sample_data.py --data data`. The samples are a fixture whose dates are designed relative to an anchor day (an event that day, a span crossing it, a weekly recurrence, more over the following days); the script shifts every date — occurrences, recurrence rules, and the dates inside `times_text` — so the anchor day becomes today and the landing view has events in it. The bundle's samples were already re-anchored when it was packaged; re-run the script whenever they have gone stale. Freshness is produced by re-running the data's producer, never by the app adjusting dates at read time — a real dataset works the same way (re-run the refresh).
 4. **Load the sample data** through the app's actions: `replace_locations` with the full set from `data/locations.json`, then `replace_events` with `data/events.json` (Part B has the contracts).
@@ -105,7 +105,7 @@ Each of these was earned from a real production failure. The installed code impl
 ### Make it yours
 
 - **Rename.** The app name lives in `app/package.json`, `app/client/index.html` (`<title>`), and the header strings in `app/client/src/`. The shipped strings are heterogeneous, so search for all three forms — "NYC Things To Do", "NYC", and "New York" — and replace each hit with your city's.
-- **Set the city.** One module, `app/client/src/cityConfig.ts`, holds every city-specific value in the client, all shipped set to New York: the map's home anchor `MID_MANHATTAN_ANCHOR`, its preferred-area bounds `PREFERRED_MANHATTAN_BOUNDS`, the landing-day timezone `CITY_TIME_ZONE`, and the preferences storage key. Set the anchor, bounds, and timezone to your city in that one file, and write the centre and zoom into the playbook (Part E).
+- **Set the city.** One module, `app/client/src/cityConfig.ts`, holds every city-specific value in the client, all shipped set to New York: the map's home anchor `MID_MANHATTAN_ANCHOR`, its preferred-area bounds `PREFERRED_MANHATTAN_BOUNDS`, the landing-day timezone `CITY_TIME_ZONE`, and the preferences storage key. Set the anchor, bounds, and timezone to your city in that one file, and write the centre into the playbook (Part E).
 - **Clear the samples.** The samples stay loaded through Phases 1–2 of the build order (Part F) — they are how you verify the app while you adapt it. Delete the five sample events (`delete_event`) and replace the sample locations only when your first real events replace them, at the start of Phase 3. The `data/` files are your canonical datasets from then on — keep their shapes exactly.
 
 ---
@@ -222,6 +222,9 @@ The bundle's `app/server/src/actions.ts` is the contract's source; the table is 
 | `replace_locations` | Atomic full-set sync. It is delete + insert, so it must always carry the full set. |
 | `update_event` | Scalar fields are safe. Passing `occurrences` replaces the whole array — it is not a merge. |
 | `delete_event` / `set_ig_mention_counts` | Explicit removals; deterministic counts from `state.json`. |
+| `upsert_location` | Insert-or-update one location by ID, invariants enforced against the live table — the routine location push. |
+| `replace_ig_sources` | Full-set sync of the sources list. Push only after a complete pull. |
+| `delete_events_ended_on_or_before` | Batch-delete every event whose last occurrence ended on or before a date — the prune's runtime half. |
 
 Mutating actions are owner-only. Images: give a write action a remote `image_url` and it ingests the image — the action fetches the HTTPS URL server-side and stores it as an owned blob (key shape `events/<event-id>/cover-<hash>`), which `list_events` resolves for the client. Push records carry the canonical `image_url` whenever it is non-null. To preserve an event's existing image, omit the `image_url` field from the push — omission keeps the stored blob. Send an explicit `null` only to clear an image. A failed fetch leaves the event in place without an image and surfaces in the action's response (`image_status` / `image_warnings`), so the pipeline can report it and retry on a later run.
 
@@ -231,21 +234,21 @@ Mutating actions are owner-only. Images: give a write action a remote `image_url
 
 ### Thirteen steps, in this order, every morning
 
-The deterministic steps run the bundle's `scripts/` as shipped; curation itself is the agent work between them.
+The deterministic steps run the bundle's `scripts/` as shipped; curation itself is the agent work between them. Every run starts by reading `PLAYBOOK.md` (repo root) — the run's taste, sources, and timing live there.
 
-**Files and working directory.** Work from inside `data/`: the datasets live there, the pull writes its dated outputs there, and the materializers discover their inputs by globbing there. One pull produces three dated intermediates — `ig-collection-new-<date>.json` (the collection pull), `ig-fanout-new-<date>.json` (the per-account fanout), and `new-posts-<date>.json` (the deduped new items that feed curation) — plus the entries waiting in `dropped-links.json` (Part D, adapter 2). Scripts that take file arguments take them explicitly: the publish filter runs from the repo root as `python3 scripts/publish_filter.py --events data/events.json --out <payload.json> --excluded-out <excluded.json>`; the other engine scripts resolve their dataset paths relative to themselves.
+**Files and working directory.** Run the engine from the repo root. The datasets live in `data/`: the pull writes its dated outputs there, and the materializers discover their inputs by globbing there; scripts resolve their dataset paths relative to themselves or take them as explicit arguments. One pull produces three dated intermediates — `ig-collection-new-<date>.json` (the collection pull), `ig-fanout-new-<date>.json` (the per-account fanout), and `new-posts-<date>.json` (the deduped new items that feed curation) — plus the entries waiting in `dropped-links.json` (Part D, adapter 2). Scripts that take file arguments take them explicitly: the publish filter runs from the repo root as `python3 scripts/publish_filter.py --events data/events.json --out <payload.json> --excluded-out <excluded.json>`; the other engine scripts resolve their dataset paths relative to themselves.
 
 1. **Pull the collection.** Paginate the user's Instagram saved collection; drop media IDs already in `state.json`.
-2. **Fan out.** Pull the last two weeks of posts from each distinct poster in the collection, plus named aggregator accounts. Drop anything already seen.
+2. **Fan out.** Pull the last two weeks of posts from each distinct poster in the collection, plus the aggregator accounts in the pull's `AGGREGATORS` list (Part D, adapter 5). Drop anything already seen.
 3. **Run the website fetchers** (Part D) and collect their contract records.
 4. **Run the rotating-venue search** (Part D, adapter 4), if the playbook names one.
-5. **Curate the new items per the playbook:** hard filters, accurate dates — the most specific dates the source states win over any broader range it also mentions — and dedup by title + location and by overlapping dates.
+5. **Curate the new items per the playbook:** hard filters, accurate dates — the most specific dates the source states win over any broader range it also mentions — and dedup by title + location and by overlapping dates. Geocode every new venue as you create its location: resolve its address to coordinates with the places lookup available to you — the location's ID is the hex encoding of the venue name, and each event copies its location's coordinates. A venue whose address cannot be resolved stays out until it can be.
 6. **Merge with checkpointing.** Merge each curation slice with `scripts/checkpoint.py` (its `checkpoint_slice` entry point): the merge folds the slice's events and locations into the datasets and records the slice's post→event mappings — `state_updates` shaped exactly `{media_id: [event_ids]}` — then persists all three files atomically, locations first, so no reader sees an event pointing at a missing location. A crashed run resumes without re-curating: skip slices whose posts are all already in state. The checkpoint boundary is the slice — a crash mid-slice loses at most that slice's curation, and its input file is still on disk for a clean re-run.
-7. **Materialise.** Expand recurrence rules (~60 days out); derive structured times from `times_text` with a strict deterministic parser (fills absent fields only); dedupe contained occurrences; recompute mention counts from `state.json`.
-8. **Validate.** No duplicate events, no dangling state references. Any failure stops the run before publish.
-9. **Prune** by the retention rule (see "The rules that keep the engine honest" below).
+7. **Materialise** (`scripts/materialize-recurrence.py`, `materialize-structured-times.py`, `dedupe-contained-occurrences.py`, `materialize-mention-counts.py`). Expand recurrence rules (~60 days out); derive structured times from `times_text` with a strict deterministic parser (fills absent fields only); dedupe contained occurrences; recompute mention counts from `state.json`. After a complete pull, also rebuild `ig-sources.json` (`materialize-ig-sources.py`, then `enrich-ig-sources.py`); after a partial pull, keep the previous sources file (Part B).
+8. **Validate** (`scripts/validate-no-duplicates.py`, `validate-recurrence.py`). No duplicate events, no dangling state references. Any failure stops the run before publish.
+9. **Prune** (`scripts/prune-old-events.py`) by the retention rule (see "The rules that keep the engine honest" below).
 10. **Build the publish payload** with the publish filter — the only place inclusion is decided.
-11. **Push:** locations first, then events; delete pruned IDs with `delete_events_ended_on_or_before` (or `delete_event` per ID). Send the location-replace action the full location set in one call (Part B), and build each `update_event` occurrences payload as the event's complete array — the update writes the array wholesale.
+11. **Push:** locations first (`upsert_location` per record; `replace_locations` with the full set is for merges and deletions), then events (`replace_events`); send the recomputed counts with `set_ig_mention_counts` and — when the pull was complete — the rebuilt sources with `replace_ig_sources`; delete pruned IDs with `delete_events_ended_on_or_before` (or `delete_event` per ID). Build each `update_event` occurrences payload as the event's complete array — the update writes the array wholesale.
 12. **Verify:** payload ID set equals runtime ID set, plus a field-level readback diff. A successful action response validates the schema, not the data — the readback diff is what closes the push.
 13. **Report:** added and corrected, newly excluded by the filter, pruned, and every source that failed.
 
@@ -301,21 +304,32 @@ Slim:
 {
   "already_curated": true,
   "event_id": "...",
-  "occurrences": [ /* new dates only */ ]
+  "occurrences": [
+    { "start_date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD", "times_text": "..." }
+  ]
 }
 
-Full:
-title, venue, address, dates, times_text,
-description, price, official_url, image
+Full (field names are Part B's schema names, exactly):
+{
+  "title": "...", "venue": "...", "address": "...",
+  "occurrences": [ { "start_date": "...", "end_date": "...", "times_text": "..." } ],
+  "description": "...", "price_text": "...", "is_free": true,
+  "category": "...", "official_url": "...", "source_url": "...",
+  "image_url": "..."
+}
+
+Coordinates are not the adapter's job: curation geocodes the venue when
+it creates the location (Part C, step 5), and the event copies its
+location's coordinates.
 ```
 
 ### The five adapters to build
 
-1. **Instagram collection pull.** Part C, steps 1–2. Configured with the user's own account and collection name. Posters are discovered from the collection itself; aggregators the user names are added to the fanout. The bundle's `scripts/ig_pull.py` is a working reference implementation of this adapter — set its account and collection constants to the user's and adapt from there. The pull runs through two tools in your Muse environment: the Instagram connector CLI (`instagram-cli`), which serves the saved collection and per-account posts, and the `hatch-zeitgeist` enrichment tool, which turns a bare post URL into a full record. The user's Instagram account must be connected to their Muse for either to work.
+1. **Instagram collection pull.** Part C, steps 1–2. Configured with the user's own account ID and collection ID — the user will know the collection by name; resolve its ID from the connector's saved-collections list, which returns names with their IDs. Posters are discovered from the collection itself; aggregators the user names are added to the fanout. The bundle's `scripts/ig_pull.py` is a working reference implementation of this adapter — set its account and collection constants to the user's and adapt from there. The pull runs through two tools in your Muse environment: the Instagram connector CLI (`instagram-cli`), which serves the saved collection and per-account posts, and the `hatch-zeitgeist` enrichment tool, which turns a bare post URL into a full record. The user's Instagram account must be connected to their Muse for either to work.
 2. **Dropped links.** Whenever the user pastes a post or event link in chat, queue it in `data/dropped-links.json` — a JSON list of `{url, added_at, note}` — and let the morning run process the queue alongside the collection pull: each link becomes a source post, runs through the same curation path with the same `state.json` recording, and leaves the queue once recorded. It is an input channel, not a scraper — the queue file makes it explicit in the routine so links are never handled ad hoc.
 3. **Website fetchers.** One script per event-calendar website the user names. How to build one is in "Building a website fetcher" below.
 4. **Rotating-venue search.** For a venue that hosts one pop-up or exhibition at a time: search social and web for its current and next event until the next ~10 days are covered, then stop. Record processed post URLs in `state.json`.
-5. **Aggregator accounts.** Local round-up accounts the user names. Add their usernames where the pull builds its poster list — in the reference implementation, the `usernames` list in `scripts/ig_pull.py` — and record them in `ig-sources.json` alongside the discovered posters, so the fanout and the sources rebuild both carry them.
+5. **Aggregator accounts.** Local round-up accounts the user names. Record them in the playbook's Sources and in the pull's `AGGREGATORS` list (`scripts/ig_pull.py`), which the fanout unions with the collection's own posters. Never hand-edit `ig-sources.json`: because the fanout pulls the aggregators, the sources rebuild (Part C, step 7) carries them on its own.
 
 ### Building a website fetcher
 
@@ -344,16 +358,12 @@ Scrapers are the fragile layer of the whole system — a site redesign breaks it
 
 ### The file your Muse writes with you
 
-This template is the onboarding — there is no separate interview script. Work through it with the user conversationally, field by field: each field carries the question to ask, or is marked shipped, defaulted, or fixed so no question is needed. You are setting the user up, not testing or grilling them — explain how things work as you go, follow up only where an answer is too vague to build from, and use the defaults for anything the user doesn't care about. Write the answers in as you go, and treat the finished playbook as the single home for taste and sources: the engine reads it; mornings follow it. Fill every bracket — an empty bracket is an unmade decision.
+This template is the onboarding — there is no separate interview script. Work through it with the user conversationally, field by field: each field carries the question to ask, or is marked shipped, defaulted, or fixed so no question is needed. You are setting the user up, not testing or grilling them — explain how things work as you go, follow up only where an answer is too vague to build from, and use the defaults for anything the user doesn't care about. Write the answers in as you go, into `PLAYBOOK.md` at the repo root — the bundle ships that file blank, as this template. Treat the finished playbook as the single home for taste and sources: the engine reads it; mornings follow it. Fill every bracket — an empty bracket is an unmade decision.
 
 ```text
 City
   Ask: what city and area should this cover?
-  [city and area, map centre coordinates, default zoom]
-
-Views
-  All three views ship (A, B, C); the switcher lives in Settings
-   and the app opens on A by default [fixed — not a choice]
+  [city and area, map centre coordinates]
 
 Sharing
   Ask, explaining the trade-off first: the fullstack app has database
@@ -404,12 +414,9 @@ Sources
    create the collection for them if they want. The curation also
    watches the accounts whose posts land in the collection, so
    things can surface even when nothing was saved.
-  [Instagram collection name; aggregator accounts; fetcher sites
-   with script names; rotating venues]
+  [Instagram collection name and ID; aggregator accounts; fetcher
+   sites with script names; rotating venues]
 
-Report format
-  Ask: what would you like the morning message to look like?
-  [what the morning message must include (start from Part C, step 13)]
 ```
 
 ### Example playbook — filled, for a fictional city
@@ -422,10 +429,7 @@ City
   map centre 40.758, -73.9855 (stand-in coordinates — Riverton is
   plotted in Manhattan, matching the app's shipped map anchor, so the
   sample map framing works as-is; the bundle's sample data uses them;
-  replace with yours); default zoom 13
-
-Views
-  All three views (A, B, C); switcher in Settings; opens on A by default
+  replace with yours)
 
 Sharing
   Fullstack only to start; add the static public build later if sharing is wanted
@@ -453,15 +457,12 @@ Image priority
   Official site, then source thumbnail, then placeholder (fixed; no exception)
 
 Sources
-  Instagram collection: "Riverton Things to do";
+  Instagram collection: "Riverton Things to do" (ID resolved at setup);
   aggregator accounts: @example-riverton-roundup, @example-riverton-weekend (placeholder handles);
   fetcher sites: Example Downtown Association calendar (fetch-downtown.py),
   Example What's On Riverton (fetch-whatson.py) (placeholder sites and scripts);
   rotating venues: Example Project Space (placeholder venue)
 
-Report format
-  Added and corrected; newly excluded by the filter; pruned;
-  every source that failed, with partial coverage stated plainly
 ```
 
 ---
@@ -470,7 +471,7 @@ Report format
 
 ### How setup runs
 
-Setup is a conversation, not an interview, and it has no separate script: the playbook (Part E) is the interview — each field carries its question, its default, or a note that it is shipped or fixed. Read this part first for the protocol, then work through Part E with the user: welcome them, explain how things work as you go (the Instagram note under Sources is the model — teach the mechanism, don't just ask about it), and write the answers into the playbook and the app config as you go. Do not start building until the playbook is filled.
+Setup is a conversation, not an interview, and it has no separate script: the playbook (Part E) is the interview — each field carries its question, its default, or a note that it is shipped or fixed. Read this part first for the protocol, then work through Part E with the user: welcome them, explain how things work as you go (the Instagram note under Sources is the model — teach the mechanism, don't just ask about it), and write the answers into the playbook and the app config as you go. Have the conversation first: Phase 1's install runs on sample data and needs no answers, but nothing is adapted — and no real event is curated — until the playbook is filled.
 
 **Closing step, before building.** Ask the user to authorise the map's external requests in their own words — the app loads OpenStreetMap tiles for location-based map moves and links directions out to Google Maps over plain HTTPS — and carry that sentence verbatim into the build request. A second-hand summary is not accepted by the audit.
 
@@ -485,15 +486,15 @@ The build runs in phases, and the client's data seam (`app/client/src/data.ts`) 
 1. **Install the bundle and verify it.** Follow Part A: clone the repo, create the app from `app/`, restore the library assets, re-anchor the sample dates (`scripts/redate_sample_data.py`), load the sample data, and confirm the five Riverton events render. Run both test suites. The install is the foundation — every later step assumes it passed.
 **Phase 2 — Your city, still on sample data.**
 
-2. **Write the playbook and claim the datasets.** Fill the Part E playbook from the onboarding answers. The bundle's `data/` files are now the user's canonical datasets, correctly shaped, and `scripts/` runs against them as-is. The sample records stay loaded for now — they are deleted when real events replace them, in Phase 3 — so the app stays populated and verifiable while you adapt it.
-3. **Adapt the app.** Rename it to the user's city and set the city in the one config module, `app/client/src/cityConfig.ts` — map anchor, map bounds, landing-day timezone (Part A, "Make it yours") — and pick a theme. Run the app tests again after any code change.
+2. **Write the playbook and claim the datasets.** Fill in `PLAYBOOK.md` — the repo root; the bundle ships it blank, as the Part E template — from the onboarding answers. The bundle's `data/` files are now the user's canonical datasets, correctly shaped, and `scripts/` runs against them as-is. The sample records stay loaded for now — they are deleted when real events replace them, in Phase 3 — so the app stays populated and verifiable while you adapt it.
+3. **Adapt the app.** Rename it to the user's city and set the city in the one config module, `app/client/src/cityConfig.ts` — map anchor, map bounds, landing-day timezone (Part A, "Make it yours"). Run the app tests again after any code change.
 **Phase 3 — Your pipeline, real events.**
 
 4. **Clear the samples.** Delete the sample events and locations through the actions (`delete_event`; locations are replaced wholesale), leaving the datasets correctly shaped and empty of samples, ready for your first real events.
 5. **Build adapters one at a time** — the collection pull first (adapt `scripts/ig_pull.py` with the user's account and collection IDs), then each website fetcher — testing each against its live source and against the record contract before registering it in the run order.
 6. **Run the first curation supervised.** Run the full engine with the user watching the report. Fix what is wrong in the playbook or the publish filter — fixes live in those two places, so every later run inherits them.
-7. **Schedule the daily run** at the chosen local time, following the Part C run order exactly.
-8. **Static build — only if chosen.** Only if the user chose the static build during onboarding: create a second artifact from the same client with `APP_BUILD_MODE` set to `static` in `app/client/src/buildMode.ts` and the client's one data seam, `app/client/src/data.ts`, replaced by its baked-snapshot implementation, returning the same three list shapes from the generated snapshot module; generate the snapshot from the current publish payload — the payload the publish filter produces, not the raw dataset — into the client's generated snapshot module, regenerating it on every publish and never hand-editing it; share a public link, and keep publishing manual-only — rebuild and re-share by hand each time, never on the schedule. Skip this step entirely otherwise. After sharing, run the rendered-page image verification from Part A before calling it done.
+7. **Schedule the daily run** at the chosen local time, following the Part C run order exactly; every run starts by reading `PLAYBOOK.md`.
+8. **Static build — only if chosen.** Only if the user chose the static build during onboarding: create a second artifact from the same client with `APP_BUILD_MODE` set to `static` in `app/client/src/buildMode.ts` and the client's data seam swapped to its shipped static variant — copy `app/client/src/data.static.ts` over `app/client/src/data.ts`; it returns the same three list shapes from the generated snapshot module, `app/client/src/generated/snapshot.ts`. Regenerate that module from the current publish payload — the payload the publish filter produces, not the raw dataset — on every publish, keeping its typed exports (`eventsData`, `locationsData`, `igSourcesData`), and never hand-edit it; share a public link, and keep publishing manual-only — rebuild and re-share by hand each time, never on the schedule. Skip this step entirely otherwise. After sharing, run the rendered-page image verification from Part A before calling it done.
 
 #### Definition of done
 

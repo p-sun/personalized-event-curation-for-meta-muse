@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Instagram pull — canonical template. Each morning run is an instance of
 this file: copy it, fill in the constants block below (ACCOUNT /
-COLLECTION / WORK / TODAY / SINCE), and save the copy as the dated run.
+COLLECTION / WORK — TODAY and SINCE
+compute their defaults in code), and save the copy as the dated run.
 Fixes to the pull land HERE, in the template — never only in a dated copy.
 
 FORMAT NOTE — the connector's saved-posts shape nests each post under
@@ -24,12 +25,15 @@ so a partial pull survives.
 """
 import json, os, subprocess, sys, time, glob
 from collections import Counter
+from datetime import date, timedelta
 
 ACCOUNT = "YOUR_IG_USER_ID"
 COLLECTION = "YOUR_IG_COLLECTION_ID"
+AGGREGATORS = []  # extra usernames the user named (kit Part D, adapter 5):
+# the fanout unions them with the collection's own posters
 WORK = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
-TODAY = "2026-11-14"  # set per run
-SINCE = "2026-10-31"  # set per run
+TODAY = date.today().isoformat()  # run date; a dated run copy may pin it
+SINCE = (date.today() - timedelta(days=14)).isoformat()  # fanout window start
 
 class FatalError(Exception):
     pass
@@ -99,6 +103,9 @@ with open(f"{WORK}/ig-collection-new-{TODAY}.json", "w") as f:
 # --- 2. Fanout targets ---
 counts = Counter(p["username"] for p in collection_posts if p["username"])
 usernames = [u for u, _ in counts.most_common()]
+for _u in AGGREGATORS:
+    if _u not in usernames:
+        usernames.append(_u)
 print(f"distinct collection posters today: {len(counts)}; fanning out to {len(usernames)} accounts", flush=True)
 
 fanout_urls = []  # {url, username}

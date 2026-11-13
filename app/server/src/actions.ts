@@ -301,6 +301,57 @@ export const Actions = {
     },
   }),
 
+  upsert_location: defineAction({
+    description: "Creates or updates a single location record by id, enforcing the same name and address uniqueness rules as the full replace (owner-only dataset sync).",
+    request: locationInput,
+    response: z.object({ id: z.string(), created: z.boolean() }),
+    async handler(ctx, args) {
+      requireOwner(ctx);
+      const db = ctx.db<typeof schema>();
+      // Preserve replace_locations' uniqueness invariants against the live
+      // table: names unique across locations (case-insensitive)...
+      const nameKey = args.name.trim().toLocaleLowerCase("en-US");
+      const rows = await db.select().from(schema.locations);
+      const nameOwner = rows.find((row) => row.name.trim().toLocaleLowerCase("en-US") === nameKey);
+      if (nameOwner && nameOwner.id !== args.id) {
+        throw new Error(`Duplicate location: ${args.name} (already owned by ${nameOwner.id})`);
+      }
+      // ...and each address owned by at most one location (case-insensitive).
+      // Updating a location's own record is allowed, so skip its own row.
+      for (const row of rows) {
+        if (row.id === args.id) continue;
+        const owned = parseLocationAddresses(row.addressesJson).map((address) =>
+          address.trim().toLocaleLowerCase("en-US"));
+        for (const address of args.addresses) {
+          if (owned.includes(address.trim().toLocaleLowerCase("en-US"))) {
+            throw new Error(`Address belongs to more than one location: ${address}`);
+          }
+        }
+      }
+      const wasCreated = !rows.some((row) => row.id === args.id);
+      const values = {
+        id: args.id,
+        name: args.name,
+        addressesJson: JSON.stringify(args.addresses),
+        websiteUrl: args.website_url,
+        lat: args.lat,
+        lng: args.lng,
+      };
+      await db.insert(schema.locations).values(values).onConflictDoUpdate({
+        target: schema.locations.id,
+        set: {
+          name: values.name,
+          addressesJson: values.addressesJson,
+          websiteUrl: values.websiteUrl,
+          lat: values.lat,
+          lng: values.lng,
+        },
+      });
+      ctx.invalidateQueries();
+      return { id: args.id, created: wasCreated };
+    },
+  }),
+
   list_events: defineAction({
     description: "Lists all events with their occurrences, resolved image URLs, legacy favorite ids, and the last dataset sync time.",
     request: z.object({}),

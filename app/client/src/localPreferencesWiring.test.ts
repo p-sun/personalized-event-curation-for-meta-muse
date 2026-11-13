@@ -40,7 +40,7 @@ describe("local preference wiring", () => {
 
     expect(appComponent).toContain("restoreSharedUserLocation(preferences.settings.lastKnownLocation)");
     expect(saveEffect).toContain("lastKnownLocation: appUserLocation.position");
-    expect(cityConfigSource).toContain('export const PREFERENCES_STORAGE_KEY = "nyc-things-to-do:preferences:v2"');
+    expect(cityConfigSource).toContain('export const PREFERENCES_STORAGE_KEY = "things-to-do:preferences:v2"');
     expect(preferencesSource).toContain('from "./cityConfig"');
   });
 

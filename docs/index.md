@@ -370,8 +370,10 @@ The example below is fictional. Imitate its shape, register, and completeness �
 ```text
 City
   Riverton — downtown and the riverfront districts;
-  map centre 41.8781, -87.6298 (stand-in coordinates — the bundle's
-  sample data uses them; replace with yours); default zoom 13
+  map centre 40.758, -73.9855 (stand-in coordinates — Riverton is
+  plotted in Manhattan, matching the app's shipped map anchor, so the
+  sample map framing works as-is; the bundle's sample data uses them;
+  replace with yours); default zoom 13
 
 Views
   All three views (A, B, C); switcher in Settings; opens on A by default

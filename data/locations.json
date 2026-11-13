@@ -5,8 +5,8 @@
   "addresses": [
    "100 Main St, Riverton"
   ],
-  "lat": 41.8781,
-  "lng": -87.6298,
+  "lat": 40.7127,
+  "lng": -74.006,
   "website_url": null
  },
  {
@@ -15,8 +15,8 @@
   "addresses": [
    "42 Mill Race Lane, Riverton"
   ],
-  "lat": 41.8842,
-  "lng": -87.6201,
+  "lat": 40.7411,
+  "lng": -73.9897,
   "website_url": "https://example.com/old-mill-gallery"
  },
  {
@@ -25,8 +25,8 @@
   "addresses": [
    "7 Dock St, Riverton"
   ],
-  "lat": 41.8719,
-  "lng": -87.6185,
+  "lat": 40.7069,
+  "lng": -74.0113,
   "website_url": null
  }
 ]
